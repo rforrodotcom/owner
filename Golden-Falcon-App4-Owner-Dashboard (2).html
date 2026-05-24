@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="theme-color" content="#1E3A2F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GF Owner">
+<meta name="description" content="Golden Falcon Owner Dashboard — Sukha Ram">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="app-version" content="2026.05.20.1-app4-m1">
+<title>Golden Falcon™ Owner Dashboard</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A2F'/%3E%3Ctext x='50' y='62' font-family='Georgia' font-size='42' font-weight='600' fill='%23B56A3A' text-anchor='middle'%3EGF%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --forest-deepest: #0E1F18;
+  --forest-deep: #142820;
+  --forest: #1E3A2F;
+  --forest-soft: #2D5142;
+  --moss: #4A6F5C;
+  --moss-light: #6B8B7C;
+  --sage: #97AEA0;
+
+  --copper-deep: #8F4F26;
+  --copper: #B56A3A;
+  --copper-light: #D08D5E;
+  --copper-soft: #E8C9B0;
+
+  --cream: #F5EFE4;
+  --cream-soft: #FAF6ED;
+  --cream-deep: #EDE4D0;
+  --stone: #8B7E6E;
+
+  --success: #2D7A3E;
+  --warning: #C77A1F;
+  --danger: #B33A3A;
+  --info: #2C5C8A;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(20,40,32,0.06);
+  --shadow-md: 0 4px 12px rgba(20,40,32,0.08);
+  --shadow-lg: 0 8px 24px rgba(20,40,32,0.12);
+
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Manrope', -apple-system, sans-serif;
+  background: var(--cream);
+  color: var(--forest-deep);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+/* AUTH SCREEN */
+.auth-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+.auth-screen::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(181,106,58,0.15) 0%, transparent 70%);
+}
+.auth-content {
+  background: var(--cream);
+  border-radius: var(--r-xl);
+  padding: var(--space-8) var(--space-6);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 1;
+}
+.auth-logo {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+.auth-logo h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--forest);
+  letter-spacing: 0.02em;
+}
+.auth-logo .subtitle {
+  font-size: 12px;
+  color: var(--copper);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 600;
+}
+.auth-tagline {
+  text-align: center;
+  font-size: 13px;
+  color: var(--stone);
+  margin-bottom: var(--space-6);
+  font-style: italic;
+}
+
+.form-group { margin-bottom: var(--space-4); }
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--forest-soft);
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  height: 50px;
+  padding: 0 var(--space-4);
+  background: white;
+  border: 1.5px solid rgba(20,40,32,0.1);
+  border-radius: var(--r-md);
+  font-size: 15px;
+  color: var(--forest-deep);
+  transition: all 0.2s var(--ease-smooth);
+}
+.form-input:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 3px rgba(181,106,58,0.15);
+}
+.form-submit {
+  width: 100%;
+  height: 56px;
+  border-radius: var(--r-full);
+  background: var(--forest);
+  color: var(--cream);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: var(--space-3);
+  transition: all 0.3s var(--ease-smooth);
+  box-shadow: var(--shadow-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.form-submit:hover:not(:disabled) {
+  background: var(--copper);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+.form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* OTP BOXES */
+.otp-row {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  margin: var(--space-4) 0;
+}
+.otp-box {
+  flex: 1;
+  max-width: 50px;
+  height: 56px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  border: 1.5px solid rgba(20,40,32,0.1);
+  border-radius: var(--r-md);
+  background: white;
+}
+.otp-box:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 3px rgba(181,106,58,0.15);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--copper);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.demo-hint {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(181,106,58,0.08);
+  border: 1px dashed rgba(181,106,58,0.3);
+  border-radius: var(--r-md);
+  font-size: 12px;
+  color: var(--copper-deep);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* DASHBOARD */
+.app-screen {
+  min-height: 100vh;
+  background: var(--cream);
+  padding-bottom: 80px;
+}
+
+.app-header {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
+  color: var(--cream);
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+.app-header::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(181,106,58,0.12) 0%, transparent 70%);
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+.header-greeting {
+  font-size: 13px;
+  color: var(--copper-soft);
+  letter-spacing: 0.05em;
+}
+.header-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+}
+.header-role {
+  font-size: 11px;
+  color: var(--copper);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--forest);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+  letter-spacing: 0.01em;
+}
+
+.section-sub {
+  font-size: 12px;
+  color: var(--stone);
+  padding: 0 var(--space-5) var(--space-3);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* KPI CARDS */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  padding: 0 var(--space-5) var(--space-4);
+}
+.kpi-card {
+  background: white;
+  border-radius: var(--r-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(20,40,32,0.06);
+  transition: all 0.2s var(--ease-smooth);
+}
+.kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.kpi-card.full { grid-column: 1 / -1; }
+.kpi-label {
+  font-size: 11px;
+  color: var(--stone);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.kpi-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--forest);
+  margin-top: 4px;
+  letter-spacing: -0.01em;
+}
+.kpi-value.small { font-size: 22px; }
+.kpi-trend {
+  font-size: 11px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+.kpi-trend.up { color: var(--success); }
+.kpi-trend.down { color: var(--danger); }
+
+.kpi-card.featured {
+  background: linear-gradient(135deg, var(--forest) 0%, var(--forest-soft) 100%);
+  color: var(--cream);
+  border: none;
+}
+.kpi-card.featured .kpi-label { color: var(--copper-soft); }
+.kpi-card.featured .kpi-value { color: var(--cream); }
+
+/* SECTION CARD */
+.section-card {
+  background: white;
+  border-radius: var(--r-lg);
+  margin: 0 var(--space-5) var(--space-4);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(20,40,32,0.06);
+}
+.section-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--forest);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LIST ITEMS */
+.list-row {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid rgba(20,40,32,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.list-row:last-child { border-bottom: none; }
+.list-name {
+  font-size: 14px;
+  color: var(--forest-deep);
+  font-weight: 500;
+}
+.list-meta {
+  font-size: 12px;
+  color: var(--stone);
+  margin-top: 2px;
+}
+.list-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--copper);
+  white-space: nowrap;
+}
+
+/* ALERTS */
+.alert-card {
+  background: white;
+  border-radius: var(--r-lg);
+  margin: 0 var(--space-5) var(--space-3);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--copper);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.alert-card.danger { border-left-color: var(--danger); }
+.alert-card.warning { border-left-color: var(--warning); }
+.alert-card.success { border-left-color: var(--success); }
+.alert-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--forest-deep);
+}
+.alert-sub {
+  font-size: 12px;
+  color: var(--stone);
+  margin-top: 2px;
+}
+.alert-count {
+  background: var(--copper);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  min-width: 32px;
+  text-align: center;
+}
+.alert-card.danger .alert-count { background: var(--danger); }
+.alert-card.warning .alert-count { background: var(--warning); }
+.alert-card.success .alert-count { background: var(--success); }
+
+/* PROFILE */
+.profile-info {
+  background: white;
+  border-radius: var(--r-lg);
+  margin: 0 var(--space-5) var(--space-4);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--copper) 0%, var(--copper-deep) 100%);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 auto var(--space-3);
+}
+.profile-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--forest);
+}
+.profile-id {
+  font-size: 12px;
+  color: var(--stone);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+.logout-btn {
+  display: block;
+  width: calc(100% - var(--space-10));
+  margin: var(--space-5) var(--space-5);
+  height: 52px;
+  background: white;
+  border: 1.5px solid var(--danger);
+  color: var(--danger);
+  border-radius: var(--r-full);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s var(--ease-smooth);
+}
+.logout-btn:hover { background: var(--danger); color: var(--cream); }
+
+/* BOTTOM NAV */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid rgba(20,40,32,0.08);
+  padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(20,40,32,0.04);
+}
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2) 4px;
+  font-size: 10px;
+  color: var(--stone);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-md);
+  transition: all 0.2s var(--ease-smooth);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.tab-item .ico {
+  font-size: 22px;
+  line-height: 1;
+}
+.tab-item.active {
+  color: var(--copper);
+}
+.tab-item.active .ico {
+  transform: scale(1.1);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--forest-deep);
+  color: var(--cream);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 200;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-smooth);
+  max-width: 90%;
+  text-align: center;
+}
+.toast.show { opacity: 1; }
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--success); }
+
+/* LOADER */
+.loader {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--stone);
+  font-size: 13px;
+}
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(181,106,58,0.2);
+  border-top-color: var(--copper);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  color: var(--stone);
+  font-size: 13px;
+}
+
+/* TAB SELECTOR (for period switch) */
+.period-tabs {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-5) var(--space-3);
+}
+.period-tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background: white;
+  border: 1px solid rgba(20,40,32,0.08);
+  border-radius: var(--r-md);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--stone);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+.period-tab.active {
+  background: var(--forest);
+  color: var(--cream);
+  border-color: var(--forest);
+}
+
+/* P&L breakdown */
+.pnl-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid rgba(20,40,32,0.06);
+}
+.pnl-row.total {
+  font-weight: 700;
+  border-top: 2px solid var(--forest);
+  border-bottom: none;
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  color: var(--forest);
+}
+.pnl-row.profit {
+  background: rgba(45,122,62,0.06);
+  margin: var(--space-2) -var(--space-5) -var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  font-weight: 700;
+  color: var(--success);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+.pnl-label { color: var(--forest-soft); }
+.pnl-value { color: var(--forest); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ AUTH SCREENS ═══════════════════ -->
+
+<div class="auth-screen" id="view-login">
+  <div class="auth-content">
+    <div class="auth-logo">
+      <h1>Golden Falcon</h1>
+      <div class="subtitle">Owner Dashboard</div>
+    </div>
+    <p class="auth-tagline">Sirf Owner access — apna business ek nazar mein.</p>
+
+    <div class="form-group">
+      <label class="form-label" for="loginPhone">Phone Number</label>
+      <input type="tel" class="form-input" id="loginPhone" placeholder="10-digit phone" maxlength="10" inputmode="numeric">
+    </div>
+
+    <button class="form-submit" id="sendOtpBtn" onclick="sendOtp()">
+      <span>Send OTP</span>
+    </button>
+
+    <div class="demo-hint">
+      <strong>Owner only:</strong> Sukha Ram (9252732132). Baaki users App1/App2/App3 use karein.
+    </div>
+  </div>
+</div>
+
+<div class="auth-screen" id="view-otp" style="display:none;">
+  <div class="auth-content">
+    <div class="auth-logo">
+      <h1>Verify OTP</h1>
+      <div class="subtitle" id="otpPhoneLabel">Sent to ...</div>
+    </div>
+
+    <div class="otp-row">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp0">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp1">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp2">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp3">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp4">
+      <input type="tel" class="otp-box" maxlength="1" inputmode="numeric" id="otp5">
+    </div>
+
+    <button class="form-submit" id="verifyOtpBtn" onclick="verifyOtp()">
+      <span>Verify &amp; Login</span>
+    </button>
+
+    <div style="text-align:center; margin-top: var(--space-4);">
+      <button class="link-btn" onclick="goBackToLogin()">Change number</button>
+    </div>
+
+    <div class="demo-hint" id="demoOtpHint" style="display:none;">
+      Demo OTP: <strong id="demoOtpCode"></strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+
+<div class="app-screen" id="view-app" style="display:none;">
+  <div class="app-header">
+    <div class="header-row">
+      <div>
+        <div class="header-greeting" id="greetingText">Welcome back</div>
+        <div class="header-name" id="ownerName">Owner</div>
+        <div class="header-role" id="ownerId">OWN-0001</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="view active" id="view-home">
+    <div class="section-title">Today's Snapshot</div>
+    <div class="kpi-grid">
+      <div class="kpi-card featured">
+        <div class="kpi-label">Today Revenue</div>
+        <div class="kpi-value" id="todayRevenue">₹0</div>
+      </div>
+      <div class="kpi-card featured">
+        <div class="kpi-label">Today Profit</div>
+        <div class="kpi-value" id="todayProfit">₹0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Today Orders</div>
+        <div class="kpi-value small" id="todayOrders">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Active Customers</div>
+        <div class="kpi-value small" id="activeCustomers">0</div>
+      </div>
+    </div>
+
+    <div class="section-title">This Month</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Month Revenue</div>
+        <div class="kpi-value small" id="monthRevenue">₹0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Month Profit</div>
+        <div class="kpi-value small" id="monthProfit">₹0</div>
+        <div class="kpi-trend up" id="monthMargin">0% margin</div>
+      </div>
+    </div>
+
+    <div class="section-title">Action Required</div>
+    <div id="alertCards"></div>
+  </div>
+
+  <!-- SALES -->
+  <div class="view" id="view-sales">
+    <div class="section-title">Sales Insights</div>
+
+    <div class="section-card">
+      <div class="section-card-title">Top Customers</div>
+      <div id="topCustomersList">
+        <div class="loader"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-title">Top Products</div>
+      <div id="topProductsList">
+        <div class="loader"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-title">Sales by Region</div>
+      <div id="salesByRegionList">
+        <div class="loader"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONEY -->
+  <div class="view" id="view-money">
+    <div class="section-title">Profit &amp; Loss</div>
+    <div class="period-tabs">
+      <button class="period-tab active" onclick="switchPnlPeriod('month')">This Month</button>
+      <button class="period-tab" onclick="switchPnlPeriod('year')">This Year</button>
+      <button class="period-tab" onclick="switchPnlPeriod('all')">All Time</button>
+    </div>
+    <div class="section-card">
+      <div id="pnlContent">
+        <div class="loader"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>
+
+    <div class="section-title">GST Report</div>
+    <div class="section-card">
+      <div id="gstContent">
+        <div class="loader"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="view" id="view-alerts">
+    <div class="section-title">Action Center</div>
+    <div id="alertsList">
+      <div class="loader"><span class="spinner"></span>Loading...</div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="view" id="view-profile">
+    <div class="section-title">Profile</div>
+    <div class="profile-info">
+      <div class="profile-avatar" id="profileAvatar">SR</div>
+      <div class="profile-name" id="profileName">Sukha Ram</div>
+      <div class="profile-id" id="profileId">OWN-0001 · OWNER</div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-title">Business Info</div>
+      <div class="list-row">
+        <div>
+          <div class="list-name">Phone</div>
+        </div>
+        <div class="list-value" id="profilePhone" style="color:var(--forest);font-size:14px;font-weight:500;">—</div>
+      </div>
+      <div class="list-row">
+        <div>
+          <div class="list-name">Total Customers</div>
+        </div>
+        <div class="list-value" id="profileCustomers" style="color:var(--forest);font-size:14px;font-weight:500;">—</div>
+      </div>
+      <div class="list-row">
+        <div>
+          <div class="list-name">App Version</div>
+        </div>
+        <div class="list-value" style="color:var(--forest);font-size:14px;font-weight:500;">2026.05.20.1</div>
+      </div>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-item active" data-tab="home" onclick="switchTab('home')">
+      <div class="ico">🏠</div>
+      <div>Home</div>
+    </button>
+    <button class="tab-item" data-tab="sales" onclick="switchTab('sales')">
+      <div class="ico">📊</div>
+      <div>Sales</div>
+    </button>
+    <button class="tab-item" data-tab="money" onclick="switchTab('money')">
+      <div class="ico">💰</div>
+      <div>Money</div>
+    </button>
+    <button class="tab-item" data-tab="alerts" onclick="switchTab('alerts')">
+      <div class="ico">🔔</div>
+      <div>Alerts</div>
+    </button>
+    <button class="tab-item" data-tab="profile" onclick="switchTab('profile')">
+      <div class="ico">👤</div>
+      <div>Profile</div>
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzXjaI4px4WeWcC8X0gSS1n7rOhmGq_MABlIzq2-KLmqmd-bAb3wifLlxn5bUnajuZsmw/exec';
+
+const STATE = {
+  user: null,
+  phone: null,
+  view: 'login',
+  tab: 'home',
+  pnlPeriod: 'month',
+  kpis: null,
+  topCustomers: null,
+  topProducts: null,
+  salesByRegion: null
+};
+
+// ─── UTILITY ─────────────────────────────────────────────────
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+function formatINR(amt) {
+  if (!amt && amt !== 0) return '₹0';
+  const n = Math.round(parseFloat(amt));
+  return '₹' + n.toLocaleString('en-IN');
+}
+
+function formatNumber(n) {
+  return (n || 0).toLocaleString('en-IN');
+}
+
+async function apiCall(action, params) {
+  const body = Object.assign({ action, sessionId: STATE.user && STATE.user.sessionId }, params || {});
+  const formData = new URLSearchParams();
+  Object.keys(body).forEach(k => { if (body[k] !== undefined && body[k] !== null) formData.append(k, body[k]); });
+  const res = await fetch(API_URL + '?' + formData.toString());
+  return await res.json();
+}
+
+// ─── AUTH ───────────────────────────────────────────────────
+async function sendOtp() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  if (!phone || phone.length !== 10) {
+    showToast('Sahi 10-digit phone daalo', 'error');
+    return;
+  }
+  STATE.phone = phone;
+  const btn = document.getElementById('sendOtpBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>Sending...</span>';
+
+  try {
+    const res = await fetch(API_URL + '?action=send_otp&phone=' + phone);
+    const data = await res.json();
+    if (!data.success) {
+      showToast(data.error || 'OTP send failed', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>Send OTP</span>';
+      return;
+    }
+    // Verify owner role pehle hi
+    if (data.role && data.role !== 'owner') {
+      showToast('Ye app sirf Owner ke liye hai', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>Send OTP</span>';
+      return;
+    }
+    // Show OTP screen
+    document.getElementById('view-login').style.display = 'none';
+    document.getElementById('view-otp').style.display = 'flex';
+    document.getElementById('otpPhoneLabel').textContent = 'Sent to ' + phone;
+    document.getElementById('otp0').focus();
+    if (data.demoOtp) {
+      document.getElementById('demoOtpHint').style.display = 'block';
+      document.getElementById('demoOtpCode').textContent = data.demoOtp;
+    }
+  } catch(e) {
+    showToast('Network error', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>Send OTP</span>';
+  }
+}
+
+async function verifyOtp() {
+  let otp = '';
+  for (let i = 0; i < 6; i++) otp += document.getElementById('otp' + i).value;
+  if (otp.length !== 6) { showToast('Pura OTP daalo', 'error'); return; }
+
+  const btn = document.getElementById('verifyOtpBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>Verifying...</span>';
+
+  try {
+    const res = await fetch(API_URL + '?action=verify_otp&phone=' + STATE.phone + '&otp=' + otp);
+    const data = await res.json();
+    if (!data.success) {
+      showToast(data.error || 'Galat OTP', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>Verify & Login</span>';
+      return;
+    }
+    if (data.role !== 'owner') {
+      showToast('Ye app sirf Owner ke liye hai. Aap ' + (data.role || 'lead') + ' hain.', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>Verify & Login</span>';
+      return;
+    }
+    STATE.user = {
+      sessionId: data.sessionId,
+      personId: data.personId,
+      name: data.name,
+      role: data.role,
+      phone: STATE.phone
+    };
+    localStorage.setItem('gf_owner_session', JSON.stringify(STATE.user));
+    enterApp();
+  } catch(e) {
+    showToast('Network error', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<span>Verify & Login</span>';
+  }
+}
+
+function goBackToLogin() {
+  document.getElementById('view-otp').style.display = 'none';
+  document.getElementById('view-login').style.display = 'flex';
+  for (let i = 0; i < 6; i++) document.getElementById('otp' + i).value = '';
+}
+
+function logout() {
+  if (!confirm('Logout karna hai?')) return;
+  localStorage.removeItem('gf_owner_session');
+  STATE.user = null;
+  STATE.phone = null;
+  document.getElementById('view-app').style.display = 'none';
+  document.getElementById('view-otp').style.display = 'none';
+  document.getElementById('view-login').style.display = 'flex';
+  document.getElementById('loginPhone').value = '';
+}
+
+// ─── ENTER APP ──────────────────────────────────────────────
+function enterApp() {
+  document.getElementById('view-login').style.display = 'none';
+  document.getElementById('view-otp').style.display = 'none';
+  document.getElementById('view-app').style.display = 'block';
+
+  document.getElementById('ownerName').textContent = STATE.user.name || 'Owner';
+  document.getElementById('ownerId').textContent = STATE.user.personId || 'OWN-0001';
+  document.getElementById('profileName').textContent = STATE.user.name || 'Owner';
+  document.getElementById('profileId').textContent = (STATE.user.personId || 'OWN-0001') + ' · OWNER';
+  document.getElementById('profilePhone').textContent = STATE.user.phone || '—';
+  // Avatar initials
+  const initials = (STATE.user.name || 'Owner').split(' ').map(s => s[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('profileAvatar').textContent = initials;
+
+  // Greeting based on time
+  const hr = new Date().getHours();
+  let greet = 'Welcome back';
+  if (hr < 12) greet = 'Good morning';
+  else if (hr < 17) greet = 'Good afternoon';
+  else greet = 'Good evening';
+  document.getElementById('greetingText').textContent = greet;
+
+  loadHome();
+}
+
+// ─── TABS ───────────────────────────────────────────────────
+function switchTab(tab) {
+  STATE.tab = tab;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  window.scrollTo(0, 0);
+
+  if (tab === 'home') loadHome();
+  else if (tab === 'sales') loadSales();
+  else if (tab === 'money') loadMoney();
+  else if (tab === 'alerts') loadAlerts();
+}
+
+// ─── HOME ───────────────────────────────────────────────────
+async function loadHome() {
+  try {
+    const res = await apiCall('owner_dashboard_kpis');
+    if (!res.success) { showToast(res.error || 'KPI load failed', 'error'); return; }
+
+    STATE.kpis = res.data;
+    const d = res.data;
+
+    document.getElementById('todayRevenue').textContent = formatINR(d.today.revenue);
+    document.getElementById('todayProfit').textContent = formatINR(d.today.profit);
+    document.getElementById('todayOrders').textContent = formatNumber(d.today.orders);
+    document.getElementById('activeCustomers').textContent = formatNumber(d.counters.activeCustomers);
+    document.getElementById('monthRevenue').textContent = formatINR(d.month.revenue);
+    document.getElementById('monthProfit').textContent = formatINR(d.month.profit);
+    document.getElementById('monthMargin').textContent = (d.month.margin || 0).toFixed(1) + '% margin';
+
+    document.getElementById('profileCustomers').textContent = formatNumber(d.counters.activeCustomers);
+
+    // Render alert cards
+    const alerts = [];
+    if (d.counters.pendingApprovals > 0) alerts.push({ title:'Pending Approvals', sub:'Owner action required', count:d.counters.pendingApprovals, type:'danger', tab:'alerts' });
+    if (d.counters.lowStockItems > 0) alerts.push({ title:'Low Stock Items', sub:'Reorder soon', count:d.counters.lowStockItems, type:'warning', tab:'alerts' });
+    if (d.counters.pendingOrders > 0) alerts.push({ title:'Pending Orders', sub:'Need confirmation', count:d.counters.pendingOrders, type:'warning', tab:'alerts' });
+    if (d.counters.inProgressOrders > 0) alerts.push({ title:'In Progress Orders', sub:'Being processed', count:d.counters.inProgressOrders, type:'success', tab:'alerts' });
+
+    const cardsHtml = alerts.length ? alerts.map(a =>
+      `<div class="alert-card ${a.type}" onclick="switchTab('${a.tab}')">
+         <div>
+           <div class="alert-title">${a.title}</div>
+           <div class="alert-sub">${a.sub}</div>
+         </div>
+         <div class="alert-count">${a.count}</div>
+       </div>`
+    ).join('') : '<div class="empty-state">Sab clear hai ✓</div>';
+
+    document.getElementById('alertCards').innerHTML = cardsHtml;
+  } catch(e) {
+    showToast('Network error', 'error');
+  }
+}
+
+// ─── SALES ──────────────────────────────────────────────────
+async function loadSales() {
+  // Top Customers
+  apiCall('owner_get_top_customers', { limit: 10 }).then(res => {
+    if (!res.success) {
+      document.getElementById('topCustomersList').innerHTML = '<div class="empty-state">Load failed</div>';
+      return;
+    }
+    const list = res.data.customers || [];
+    if (!list.length) {
+      document.getElementById('topCustomersList').innerHTML = '<div class="empty-state">Koi data nahi</div>';
+      return;
+    }
+    document.getElementById('topCustomersList').innerHTML = list.map((c, i) =>
+      `<div class="list-row">
+        <div>
+          <div class="list-name">${i+1}. ${c.name || c.customer_id || '—'}</div>
+          <div class="list-meta">${c.orders || 0} orders</div>
+        </div>
+        <div class="list-value">${formatINR(c.total_value || 0)}</div>
+      </div>`
+    ).join('');
+  }).catch(() => {
+    document.getElementById('topCustomersList').innerHTML = '<div class="empty-state">Network error</div>';
+  });
+
+  // Top Products
+  apiCall('owner_get_top_products', { limit: 10 }).then(res => {
+    if (!res.success) {
+      document.getElementById('topProductsList').innerHTML = '<div class="empty-state">Load failed</div>';
+      return;
+    }
+    const list = res.data.products || [];
+    if (!list.length) {
+      document.getElementById('topProductsList').innerHTML = '<div class="empty-state">Koi data nahi</div>';
+      return;
+    }
+    document.getElementById('topProductsList').innerHTML = list.map((p, i) =>
+      `<div class="list-row">
+        <div>
+          <div class="list-name">${i+1}. ${p.name || p.item_id || '—'}</div>
+          <div class="list-meta">${p.qty || 0} units sold</div>
+        </div>
+        <div class="list-value">${formatINR(p.total_value || 0)}</div>
+      </div>`
+    ).join('');
+  }).catch(() => {
+    document.getElementById('topProductsList').innerHTML = '<div class="empty-state">Network error</div>';
+  });
+
+  // Sales by Region
+  apiCall('owner_get_sales_by_region').then(res => {
+    if (!res.success) {
+      document.getElementById('salesByRegionList').innerHTML = '<div class="empty-state">Load failed</div>';
+      return;
+    }
+    const list = res.data.regions || [];
+    if (!list.length) {
+      document.getElementById('salesByRegionList').innerHTML = '<div class="empty-state">Koi data nahi</div>';
+      return;
+    }
+    document.getElementById('salesByRegionList').innerHTML = list.map(r =>
+      `<div class="list-row">
+        <div>
+          <div class="list-name">${r.region || r.state || '—'}</div>
+          <div class="list-meta">${r.orders || 0} orders</div>
+        </div>
+        <div class="list-value">${formatINR(r.total_value || 0)}</div>
+      </div>`
+    ).join('');
+  }).catch(() => {
+    document.getElementById('salesByRegionList').innerHTML = '<div class="empty-state">Network error</div>';
+  });
+}
+
+// ─── MONEY ──────────────────────────────────────────────────
+function switchPnlPeriod(period) {
+  STATE.pnlPeriod = period;
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  loadPnL();
+}
+
+async function loadMoney() {
+  loadPnL();
+  loadGST();
+}
+
+async function loadPnL() {
+  let from = null;
+  const now = new Date();
+  if (STATE.pnlPeriod === 'month') {
+    from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  } else if (STATE.pnlPeriod === 'year') {
+    from = new Date(now.getFullYear(), 0, 1).toISOString();
+  }
+  // 'all' = null = all time
+
+  try {
+    const params = {};
+    if (from) params.from_date = from;
+    const res = await apiCall('owner_get_pnl', params);
+    if (!res.success) {
+      document.getElementById('pnlContent').innerHTML = '<div class="empty-state">Load failed</div>';
+      return;
+    }
+    const d = res.data;
+    document.getElementById('pnlContent').innerHTML = `
+      <div class="pnl-row"><span class="pnl-label">Total Income</span><span class="pnl-value">${formatINR(d.totalIncome || 0)}</span></div>
+      <div class="pnl-row"><span class="pnl-label">Total Expenses</span><span class="pnl-value">${formatINR(d.totalExpenses || 0)}</span></div>
+      <div class="pnl-row"><span class="pnl-label">Cost of Goods</span><span class="pnl-value">${formatINR(d.cogs || 0)}</span></div>
+      <div class="pnl-row profit"><span>Net Profit</span><span>${formatINR(d.netProfit || 0)} (${(d.profitMargin || 0).toFixed(1)}%)</span></div>
+    `;
+  } catch(e) {
+    document.getElementById('pnlContent').innerHTML = '<div class="empty-state">Network error</div>';
+  }
+}
+
+async function loadGST() {
+  try {
+    const now = new Date();
+    const res = await apiCall('owner_get_gst_report', { month: now.getMonth() + 1, year: now.getFullYear() });
+    if (!res.success) {
+      document.getElementById('gstContent').innerHTML = '<div class="empty-state">Load failed</div>';
+      return;
+    }
+    const d = res.data;
+    document.getElementById('gstContent').innerHTML = `
+      <div class="pnl-row"><span class="pnl-label">Taxable Value</span><span class="pnl-value">${formatINR(d.taxableValue || 0)}</span></div>
+      <div class="pnl-row"><span class="pnl-label">CGST</span><span class="pnl-value">${formatINR(d.cgst || 0)}</span></div>
+      <div class="pnl-row"><span class="pnl-label">SGST</span><span class="pnl-value">${formatINR(d.sgst || 0)}</span></div>
+      <div class="pnl-row"><span class="pnl-label">IGST</span><span class="pnl-value">${formatINR(d.igst || 0)}</span></div>
+      <div class="pnl-row total"><span class="pnl-label">Total GST</span><span class="pnl-value">${formatINR(d.totalTax || 0)}</span></div>
+    `;
+  } catch(e) {
+    document.getElementById('gstContent').innerHTML = '<div class="empty-state">Network error</div>';
+  }
+}
+
+// ─── ALERTS ─────────────────────────────────────────────────
+async function loadAlerts() {
+  document.getElementById('alertsList').innerHTML = '<div class="loader"><span class="spinner"></span>Loading...</div>';
+
+  let html = '';
+
+  // ── 1. ROLE REQUESTS (pehle dikhao — priority) ──────────
+  try {
+    const rr = await apiCall('owner_get_role_requests');
+    if (rr.success && rr.data && rr.data.length) {
+      html += `<div class="section-title" style="margin-top:0">New Users — Approve Karo</div>`;
+      html += rr.data.map(r => `
+        <div class="alert-card danger" id="rr-${r.personId}" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+            <div>
+              <div class="alert-title">${r.name || r.display_name || 'New User'}</div>
+              <div class="alert-sub">${r.phone} &nbsp;·&nbsp; ${r.personId}</div>
+            </div>
+            <div class="alert-count">${r.status || 'pending'}</div>
+          </div>
+          <div style="display:flex;gap:8px;width:100%;align-items:center">
+            <select id="role-sel-${r.personId}" style="flex:1;height:38px;border:1.5px solid rgba(20,40,32,0.15);border-radius:8px;padding:0 10px;font-size:13px;background:white;color:var(--forest-deep)">
+              <option value="customer">Customer</option>
+              <option value="salesman">Salesman</option>
+              <option value="technician">Technician</option>
+              <option value="manager">Manager</option>
+            </select>
+            <button onclick="approveRole('${r.personId}')" style="flex:1;height:38px;background:var(--success);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Approve</button>
+            <button onclick="rejectRole('${r.personId}')" style="width:38px;height:38px;background:var(--danger);color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer">✕</button>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+
+  // ── 2. EXISTING ALERTS (waise hi — kuch nahi toda) ──────
+  const out = [];
+  const d = STATE.kpis;
+  if (d) {
+    if (d.counters.pendingApprovals > 0) out.push({ title:'Pending Approvals', sub:'Need owner action — open App3 to review', count:d.counters.pendingApprovals, type:'danger' });
+    if (d.counters.lowStockItems > 0) out.push({ title:'Low Stock Items', sub:'Reorder these from suppliers', count:d.counters.lowStockItems, type:'warning' });
+    if (d.counters.pendingOrders > 0) out.push({ title:'Pending Orders', sub:'Customer waiting for confirmation', count:d.counters.pendingOrders, type:'warning' });
+    if (d.counters.inProgressOrders > 0) out.push({ title:'In Progress Orders', sub:'Being processed currently', count:d.counters.inProgressOrders, type:'success' });
+  }
+
+  try {
+    const res = await apiCall('owner_get_pricing_threats');
+    if (res.success && res.data.threats && res.data.threats.length) {
+      out.push({ title:'Pricing Threats', sub:'Competitors mein price changes hain', count:res.data.threats.length, type:'danger' });
+    }
+  } catch(e) {}
+
+  if (out.length) {
+    html += `<div class="section-title">System Alerts</div>`;
+    html += out.map(a =>
+      `<div class="alert-card ${a.type}">
+         <div>
+           <div class="alert-title">${a.title}</div>
+           <div class="alert-sub">${a.sub}</div>
+         </div>
+         <div class="alert-count">${a.count}</div>
+       </div>`
+    ).join('');
+  }
+
+  document.getElementById('alertsList').innerHTML = html || '<div class="empty-state">Sab clear hai ✓ Koi action pending nahi.</div>';
+}
+
+async function approveRole(personId) {
+  const role = document.getElementById('role-sel-' + personId).value;
+  try {
+    const res = await apiCall('owner_approve_role', { personId, role, action:'approve' });
+    if (res.success) {
+      showToast(role + ' approved!', 'success');
+      document.getElementById('rr-' + personId).remove();
+    } else {
+      showToast(res.error || 'Approve failed', 'error');
+    }
+  } catch(e) { showToast('Network error', 'error'); }
+}
+
+async function rejectRole(personId) {
+  if (!confirm('Is user ko reject karo?')) return;
+  try {
+    const res = await apiCall('owner_approve_role', { personId, role:'lead', action:'reject' });
+    if (res.success) {
+      showToast('Rejected', 'success');
+      document.getElementById('rr-' + personId).remove();
+    } else {
+      showToast(res.error || 'Reject failed', 'error');
+    }
+  } catch(e) { showToast('Network error', 'error'); }
+}
+
+// ─── OTP AUTO-MOVE ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  for (let i = 0; i < 6; i++) {
+    const inp = document.getElementById('otp' + i);
+    inp.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0,1);
+      if (e.target.value && i < 5) document.getElementById('otp' + (i+1)).focus();
+    });
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && i > 0) {
+        document.getElementById('otp' + (i-1)).focus();
+      }
+    });
+  }
+
+  // Restore session
+  const saved = localStorage.getItem('gf_owner_session');
+  if (saved) {
+    try {
+      STATE.user = JSON.parse(saved);
+      STATE.phone = STATE.user.phone;
+      // Verify session still active
+      apiCall('verify_session').then(res => {
+        if (res.success) {
+          enterApp();
+        } else {
+          localStorage.removeItem('gf_owner_session');
+          STATE.user = null;
+        }
+      }).catch(() => {
+        enterApp(); // Allow offline fallback
+      });
+    } catch(e) {
+      localStorage.removeItem('gf_owner_session');
+    }
+  }
+});
+</script>
+</body>
+</html>
