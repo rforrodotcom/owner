@@ -643,6 +643,64 @@ input, select, textarea {
 }
 .pnl-label { color: var(--forest-soft); }
 .pnl-value { color: var(--forest); font-weight: 600; }
+
+/* ── Catalog Photos ── */
+.cat-filter-bar {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 0 0 8px 0; margin-bottom: 12px; scrollbar-width: none;
+}
+.cat-filter-btn {
+  white-space: nowrap; padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: transparent;
+  font-size: 12px; color: var(--text-secondary); cursor: pointer;
+}
+.cat-filter-btn.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+.cat-item-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px; margin-bottom: 12px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.cat-item-thumb {
+  width: 64px; height: 64px; border-radius: 10px; object-fit: cover;
+  background: var(--input-bg); border: 1px solid var(--border);
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 24px; overflow: hidden;
+}
+.cat-item-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+.cat-item-info { flex: 1; min-width: 0; }
+.cat-item-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cat-item-meta { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+.cat-photo-count { font-size: 11px; color: var(--forest); margin-bottom: 8px; }
+.cat-upload-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; background: var(--forest); color: #fff;
+  border: none; border-radius: 8px; font-size: 12px; cursor: pointer;
+}
+.cat-upload-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.cat-upload-btn.secondary { background: transparent; color: var(--forest); border: 1.5px solid var(--forest); }
+.photo-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 9999; align-items: center; justify-content: center; padding: 20px;
+}
+.photo-modal-overlay.open { display: flex; }
+.photo-modal { background: var(--card-bg); border-radius: 16px; width: 100%; max-width: 360px; padding: 20px; }
+.photo-modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.photo-modal-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+.photo-preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.photo-preview-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--input-bg); border: 1px solid var(--border); }
+.photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.photo-delete-btn {
+  position: absolute; top: 2px; right: 2px; background: rgba(200,0,0,0.85);
+  color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px;
+  font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.upload-area {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 20px;
+  text-align: center; cursor: pointer; margin-bottom: 12px; transition: border-color 0.2s;
+}
+.upload-area:hover { border-color: var(--forest); }
+.upload-area-text { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+.upload-progress { display: none; margin-top: 10px; font-size: 12px; color: var(--forest); text-align: center; }
 </style>
 </head>
 <body>
@@ -844,6 +902,41 @@ input, select, textarea {
     <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
+
+  <div class="view" id="view-catalog">
+    <div class="section-title">Catalog Photos</div>
+    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">
+      Items ki photos add karo — customer app mein dikhenge
+    </div>
+    <div class="cat-filter-bar" id="catFilterBar">
+      <button class="cat-filter-btn active" onclick="filterCatalog('All')">All</button>
+      <button class="cat-filter-btn" onclick="filterCatalog('Domestic')">Domestic</button>
+      <button class="cat-filter-btn" onclick="filterCatalog('Commercial')">Commercial</button>
+      <button class="cat-filter-btn" onclick="filterCatalog('Industrial')">Industrial</button>
+      <button class="cat-filter-btn" onclick="filterCatalog('Spare Parts')">Spare Parts</button>
+    </div>
+    <div id="catalogPhotoList"><div class="empty-state">Loading items...</div></div>
+  </div>
+
+  <!-- Photo Modal -->
+  <div class="photo-modal-overlay" id="photoModalOverlay" onclick="closePhotoModal(event)">
+    <div class="photo-modal">
+      <div class="photo-modal-title" id="photoModalTitle">Item Photos</div>
+      <div class="photo-modal-sub" id="photoModalSub"></div>
+      <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+      <div class="upload-area" onclick="document.getElementById('photoFileInput').click()">
+        <div style="font-size:28px;">📷</div>
+        <div class="upload-area-text">Camera ya Gallery se photo chuno<br>
+          <span style="font-size:11px;">JPG / PNG — max 5MB</span></div>
+      </div>
+      <input type="file" id="photoFileInput" accept="image/*" style="display:none"
+             onchange="handlePhotoSelected(event)">
+      <div class="upload-progress" id="uploadProgress">⏳ Upload ho raha hai...</div>
+      <button class="cat-upload-btn secondary" style="width:100%;justify-content:center;margin-top:8px;"
+              onclick="closePhotoModal()">Close</button>
+    </div>
+  </div>
+
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-item active" data-tab="home" onclick="switchTab('home')">
@@ -865,6 +958,10 @@ input, select, textarea {
     <button class="tab-item" data-tab="profile" onclick="switchTab('profile')">
       <div class="ico">👤</div>
       <div>Profile</div>
+    </button>
+    <button class="tab-item" data-tab="catalog" onclick="switchTab('catalog')">
+      <div class="ico">🖼️</div>
+      <div>Photos</div>
     </button>
   </div>
 </div>
@@ -1368,6 +1465,154 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+  // ── Catalog Photos ──────────────────────────────────────
+  let CATALOG_ITEMS  = [];
+  let CATALOG_FILTER = 'All';
+  let CURRENT_ITEM   = null;
+
+  // Patch switchTab to lazy-load catalog
+  const _origSwitchTab = window.switchTab;
+  window.switchTab = function(tab) {
+    _origSwitchTab(tab);
+    if (tab === 'catalog' && CATALOG_ITEMS.length === 0) loadCatalogPhotos();
+  };
+
+  async function loadCatalogPhotos() {
+    document.getElementById('catalogPhotoList').innerHTML =
+      '<div class="empty-state">Loading items...</div>';
+    try {
+      const res = await apiCall({ action: 'owner_get_catalog_photos' });
+      if (!res.success) throw new Error(res.error);
+      CATALOG_ITEMS = res.items || [];
+      renderCatalogList();
+    } catch(e) {
+      document.getElementById('catalogPhotoList').innerHTML =
+        '<div class="empty-state">Error: ' + e.message + '</div>';
+    }
+  }
+
+  function filterCatalog(cat) {
+    CATALOG_FILTER = cat;
+    document.querySelectorAll('.cat-filter-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent === cat);
+    });
+    renderCatalogList();
+  }
+
+  function renderCatalogList() {
+    const filtered = CATALOG_FILTER === 'All'
+      ? CATALOG_ITEMS
+      : CATALOG_ITEMS.filter(i => i.category === CATALOG_FILTER);
+    if (!filtered.length) {
+      document.getElementById('catalogPhotoList').innerHTML =
+        '<div class="empty-state">Koi item nahi mila</div>';
+      return;
+    }
+    const html = filtered.map(item => {
+      const photos = item.photos ? item.photos.split(',').filter(Boolean) : [];
+      const thumb  = photos.length
+        ? '<div class="cat-item-thumb"><img src="' + photos[0] + '" onerror="this.parentElement.innerHTML='📦'"></div>'
+        : '<div class="cat-item-thumb">📦</div>';
+      return '<div class="cat-item-card">' + thumb +
+        '<div class="cat-item-info">' +
+        '<div class="cat-item-name">' + item.name + '</div>' +
+        '<div class="cat-item-meta">' + item.item_id + ' · ₹' + Number(item.price||0).toLocaleString('en-IN') + '</div>' +
+        '<div class="cat-photo-count">' + (photos.length ? '✅ ' + photos.length + ' photo' + (photos.length>1?'s':'') : '📷 No photos yet') + '</div>' +
+        '<button class="cat-upload-btn" onclick="openPhotoModal('' + item.item_id + '')">' +
+        (photos.length ? '+ Add More' : '+ Add Photo') + '</button>' +
+        '</div></div>';
+    }).join('');
+    document.getElementById('catalogPhotoList').innerHTML = html;
+  }
+
+  function openPhotoModal(itemId) {
+    CURRENT_ITEM = CATALOG_ITEMS.find(i => i.item_id === itemId);
+    if (!CURRENT_ITEM) return;
+    document.getElementById('photoModalTitle').textContent = CURRENT_ITEM.name;
+    document.getElementById('photoModalSub').textContent   = CURRENT_ITEM.item_id + ' — Photos manage karo';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('photoFileInput').value = '';
+    renderPhotoGrid();
+    document.getElementById('photoModalOverlay').classList.add('open');
+  }
+
+  function renderPhotoGrid() {
+    const photos = CURRENT_ITEM.photos ? CURRENT_ITEM.photos.split(',').filter(Boolean) : [];
+    if (!photos.length) {
+      document.getElementById('photoPreviewGrid').innerHTML =
+        '<div style="grid-column:1/-1;font-size:12px;color:var(--text-secondary);padding:8px 0;">Abhi koi photo nahi</div>';
+      return;
+    }
+    document.getElementById('photoPreviewGrid').innerHTML = photos.map(url =>
+      '<div class="photo-preview-item"><img src="' + url + '" onerror="this.src=''"><button class="photo-delete-btn" onclick="deletePhoto('' + url + '')">✕</button></div>'
+    ).join('');
+  }
+
+  function closePhotoModal(event) {
+    if (event && event.target !== document.getElementById('photoModalOverlay')) return;
+    document.getElementById('photoModalOverlay').classList.remove('open');
+    CURRENT_ITEM = null;
+  }
+
+  function handlePhotoSelected(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('Sirf image files allowed hain'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('File 5MB se badi hai — chhoti photo lo'); return; }
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      await uploadPhoto(e.target.result.split(',')[1], file.name, file.type);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function uploadPhoto(base64Data, fileName, mimeType) {
+    if (!CURRENT_ITEM) return;
+    const progress = document.getElementById('uploadProgress');
+    progress.style.display = 'block';
+    progress.textContent = '⏳ Upload ho raha hai...';
+    try {
+      const res = await apiCall({
+        action: 'owner_upload_item_photo',
+        item_id: CURRENT_ITEM.item_id,
+        file_data: base64Data,
+        file_name: fileName,
+        mime_type: mimeType,
+      });
+      if (!res.success) throw new Error(res.error);
+      progress.textContent = '✅ Upload successful!';
+      const existing = CURRENT_ITEM.photos ? CURRENT_ITEM.photos.split(',').filter(Boolean) : [];
+      existing.push(res.direct_url);
+      CURRENT_ITEM.photos = existing.join(',');
+      const idx = CATALOG_ITEMS.findIndex(i => i.item_id === CURRENT_ITEM.item_id);
+      if (idx > -1) CATALOG_ITEMS[idx].photos = CURRENT_ITEM.photos;
+      renderPhotoGrid();
+      renderCatalogList();
+      showToast('Photo add ho gaya! ✅');
+      setTimeout(() => { progress.style.display = 'none'; }, 2000);
+    } catch(e) {
+      progress.textContent = '❌ Error: ' + e.message;
+      showToast('Upload failed: ' + e.message);
+    }
+  }
+
+  async function deletePhoto(photoUrl) {
+    if (!CURRENT_ITEM) return;
+    if (!confirm('Ye photo delete karna chahte ho?')) return;
+    try {
+      const res = await apiCall({ action: 'owner_delete_item_photo', item_id: CURRENT_ITEM.item_id, photo_url: photoUrl });
+      if (!res.success) throw new Error(res.error);
+      const remaining = CURRENT_ITEM.photos.split(',').filter(Boolean).filter(u => u !== photoUrl);
+      CURRENT_ITEM.photos = remaining.join(',');
+      const idx = CATALOG_ITEMS.findIndex(i => i.item_id === CURRENT_ITEM.item_id);
+      if (idx > -1) CATALOG_ITEMS[idx].photos = CURRENT_ITEM.photos;
+      renderPhotoGrid();
+      renderCatalogList();
+      showToast('Photo delete ho gaya');
+    } catch(e) { showToast('Delete failed: ' + e.message); }
+  }
+
 </script>
 </body>
 </html>
