@@ -11,7 +11,7 @@
 <meta name="description" content="Golden Falcon Owner Dashboard — Sukha Ram">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<meta name="app-version" content="2026.05.25.6-app4-sid-fix">
+<meta name="app-version" content="2026.05.25.7-app4-alerts-catalog-fix">
 <title>Golden Falcon™ Owner Dashboard</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A2F'/%3E%3Ctext x='50' y='62' font-family='Georgia' font-size='42' font-weight='600' fill='%23B56A3A' text-anchor='middle'%3EGF%3C/text%3E%3C/svg%3E">
@@ -749,44 +749,60 @@ async function loadAlerts() {
   document.getElementById('alertsList').innerHTML = '<div class="loader"><span class="spinner"></span>Loading...</div>';
   let html = '';
 
-  // Role requests — multiple response structures handle karo
+  // Role requests — sahi action naam + multiple response structures
   try {
-    const rr = await apiCall('owner_get_role_requests');
-    if (rr.success) {
-      // Handle: rr.data (array), rr.data.requests, rr.data.approvals
+    // Audit log se confirmed: 'owner_get_pending_approvals' ya 'manager_get_pending_approvals'
+    let rr = null;
+    try { rr = await apiCall('owner_get_pending_approvals'); } catch(e1) {}
+    if (!rr || !rr.success) {
+      try { rr = await apiCall('manager_get_pending_approvals'); } catch(e2) {}
+    }
+    if (rr && rr.success) {
+      // Handle all response formats
       const list = Array.isArray(rr.data) ? rr.data
         : (rr.data && Array.isArray(rr.data.requests)) ? rr.data.requests
         : (rr.data && Array.isArray(rr.data.approvals)) ? rr.data.approvals
+        : (rr.data && Array.isArray(rr.data.items)) ? rr.data.items
         : Array.isArray(rr.requests) ? rr.requests
+        : Array.isArray(rr.approvals) ? rr.approvals
         : [];
 
-      if (list.length) {
+      // Sirf role_request type aur pending status filter karo
+      const roleReqs = list.filter(function(r) {
+        var t = (r.type || '').toLowerCase();
+        var s = (r.status || '').toLowerCase();
+        return (t === 'role_request' || t === 'role' || t === '') && s !== 'approved' && s !== 'rejected';
+      });
+
+      if (roleReqs.length) {
         html += '<div class="section-title" style="margin-top:0;padding-top:0">New Users — Approve Karo</div>';
-        html += list.map(function(r) {
-          // Handle both camelCase and snake_case
-          var pid     = r.personId || r.person_id || r.requested_by || '';
-          var aprid   = r.approval_id || r.approvalId || r.id || pid;
-          var rname   = r.name || r.display_name || r.displayName || 'New User';
-          var rphone  = r.phone || r.mobile || '';
-          var rstatus = r.status || 'pending';
-          var reqRole = r.requested_role || r.requestedRole || r.role || '';
+        html += roleReqs.map(function(r) {
+          var pid    = r.personId || r.person_id || r.requested_by || '';
+          var aprid  = r.approval_id || r.approvalId || r.id || pid;
+          var detail = r.detail || r.description || '';
+          // detail se phone nikalo: "(9876598765) → salesman"
+          var phoneMatch = detail.match(/\((\d{10})\)/);
+          var rphone = (phoneMatch && phoneMatch[1]) || r.phone || r.mobile || '';
+          var roleMatch = detail.match(/→\s*(\w+)/);
+          var reqRole = r.requested_role || r.requestedRole || (roleMatch && roleMatch[1]) || 'customer';
+          var rname  = r.name || r.display_name || detail.split('(')[0].trim() || pid;
           var selectId = 'role-sel-' + aprid;
           return (
             '<div class="alert-card danger" id="rr-' + aprid + '" style="flex-direction:column;align-items:flex-start;gap:10px">' +
               '<div style="display:flex;justify-content:space-between;width:100%;align-items:center">' +
                 '<div>' +
-                  '<div class="alert-title">' + rname + '</div>' +
-                  '<div class="alert-sub">' + rphone + (pid ? ' · ' + pid : '') + '</div>' +
+                  '<div class="alert-title">' + (rname || pid) + '</div>' +
+                  '<div class="alert-sub">' + (rphone ? rphone + ' · ' : '') + pid + '</div>' +
                 '</div>' +
-                '<div class="alert-count">' + rstatus + '</div>' +
+                '<div class="alert-count" style="background:var(--warning)">Pending</div>' +
               '</div>' +
-              (reqRole ? '<div style="font-size:12px;color:var(--copper);font-weight:600;margin-top:-4px;">Requested: ' + reqRole + '</div>' : '') +
+              '<div style="font-size:12px;color:var(--stone);margin-top:-4px;">' + detail + '</div>' +
               '<div style="display:flex;gap:8px;width:100%">' +
                 '<select id="' + selectId + '" style="flex:1;height:38px;border:1.5px solid rgba(20,40,32,0.15);border-radius:8px;padding:0 10px;font-size:13px;background:white;color:var(--forest-deep)">' +
                   '<option value="customer">Customer</option>' +
-                  '<option value="salesman" ' + (reqRole==='salesman'?'selected':'') + '>Salesman</option>' +
-                  '<option value="technician">Technician</option>' +
-                  '<option value="manager">Manager</option>' +
+                  '<option value="salesman"' + (reqRole==='salesman'?' selected':'') + '>Salesman</option>' +
+                  '<option value="technician"' + (reqRole==='technician'?' selected':'') + '>Technician</option>' +
+                  '<option value="manager"' + (reqRole==='manager'?' selected':'') + '>Manager</option>' +
                 '</select>' +
                 '<button onclick="approveRole(\''+aprid+'\',\''+pid+'\')" style="flex:1;height:38px;background:var(--success);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">✅ Approve</button>' +
                 '<button onclick="rejectRole(\''+aprid+'\',\''+pid+'\')" style="width:38px;height:38px;background:var(--danger);color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer">✕</button>' +
@@ -796,7 +812,7 @@ async function loadAlerts() {
         }).join('');
       }
     }
-  } catch(e) { console.error('role_requests error:', e); }
+  } catch(e) { console.error('alerts error:', e); }
 
   // System alerts from KPI cache
   const alerts = [];
@@ -876,12 +892,25 @@ async function loadCatalogPhotos() {
   try {
     const res = await apiCall('owner_get_catalog_photos');
     if (!res.success) throw new Error(res.error || 'Load failed');
-    // Handle: res.items, res.data.items, res.data (array), res.catalog
-    CATALOG_ITEMS = Array.isArray(res.items) ? res.items
+    // Handle all possible response formats
+    let rawItems = Array.isArray(res.items) ? res.items
       : (res.data && Array.isArray(res.data.items)) ? res.data.items
       : (res.data && Array.isArray(res.data)) ? res.data
       : Array.isArray(res.catalog) ? res.catalog
+      : Array.isArray(res.products) ? res.products
       : [];
+    // Normalize: ensure item_id and category exist
+    CATALOG_ITEMS = rawItems.map(function(it) {
+      return {
+        item_id: it.item_id || it.id || it.itemId || '',
+        name: it.name || it.product_name || it.productName || 'Item',
+        category: it.category || it.type || 'Domestic',
+        price: it.price || it.salePrice || 0,
+        stock: it.stock || it.qty || 0,
+        photos: Array.isArray(it.photos) ? it.photos : (it.photos_drive_links ? [it.photos_drive_links] : []),
+        status: it.status || 'active'
+      };
+    }).filter(function(it) { return it.status !== 'inactive' && it.item_id; });
     CATALOG_LOADED = true;
     renderCatalogList();
   } catch(e) {
@@ -901,7 +930,7 @@ function filterCatalog(cat) {
 
 // ✅ FIX 5: Fixed quote escaping using data-index instead of URL in onclick
 function renderCatalogList() {
-  const filtered = CATALOG_FILTER === 'All' ? CATALOG_ITEMS : CATALOG_ITEMS.filter(i => i.category === CATALOG_FILTER);
+  const filtered = CATALOG_FILTER === 'All' ? CATALOG_ITEMS : CATALOG_ITEMS.filter(i => (i.category||'').toLowerCase() === CATALOG_FILTER.toLowerCase());
   if (!filtered.length) {
     document.getElementById('catalogPhotoList').innerHTML = '<div class="empty-state">Koi item nahi mila</div>';
     return;
