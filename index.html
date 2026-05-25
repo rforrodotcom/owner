@@ -11,7 +11,7 @@
 <meta name="description" content="Golden Falcon Owner Dashboard — Sukha Ram">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<meta name="app-version" content="2026.05.25.11-compress-get-upload">
+<meta name="app-version" content="2026.05.25.12-urlparams-post-upload">
 <title>Golden Falcon™ Owner Dashboard</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A2F'/%3E%3Ctext x='50' y='62' font-family='Georgia' font-size='42' font-weight='600' fill='%23B56A3A' text-anchor='middle'%3EGF%3C/text%3E%3C/svg%3E">
@@ -436,7 +436,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; outline: non
       <div class="photo-preview-grid" id="photoPreviewGrid"></div>
       <div class="upload-area" onclick="document.getElementById('photoFileInput').click()">
         <div style="font-size:28px;">📷</div>
-        <div class="upload-area-text">Camera ya Gallery se photo chuno<br><span style="font-size:11px;">JPG / PNG — max 5MB</span></div>
+        <div class="upload-area-text">Camera ya Gallery se photo chuno<br><span style="font-size:11px;">JPG / PNG — max 10MB</span></div>
       </div>
       <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoSelected(event)">
       <div class="upload-progress" id="uploadProgress">⏳ Upload ho raha hai...</div>
@@ -1032,13 +1032,16 @@ async function uploadPhoto(base64Data, fileName, mimeType) {
   const progress = document.getElementById('uploadProgress');
   progress.style.display = 'block'; progress.textContent = '⏳ Upload ho raha hai...';
   try {
-    // GET se bhejo — CORS issue nahi hoga
-    const res = await apiCall('owner_upload_item_photo', {
-      item_id:   CURRENT_ITEM.item_id,
-      file_data: base64Data,
-      file_name: fileName,
-      mime_type: mimeType
-    });
+    // URLSearchParams POST — simple request, no CORS preflight
+    const formData = new URLSearchParams();
+    formData.append('action', 'owner_upload_item_photo');
+    if (STATE.user && STATE.user.sessionId) formData.append('sessionId', STATE.user.sessionId);
+    formData.append('item_id', CURRENT_ITEM.item_id);
+    formData.append('file_data', base64Data);
+    formData.append('file_name', fileName);
+    formData.append('mime_type', mimeType);
+    const fetchRes = await fetch(API_URL, { method: 'POST', body: formData });
+    const res = await fetchRes.json();
     if (!res.success) throw new Error(res.error || 'Upload failed');
     progress.textContent = '✅ Upload successful!';
     const existing = CURRENT_ITEM.photos ? CURRENT_ITEM.photos.split(',').filter(Boolean) : [];
