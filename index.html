@@ -11,7 +11,7 @@
 <meta name="description" content="Golden Falcon Owner Dashboard — Sukha Ram">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<meta name="app-version" content="2026.05.25.7-app4-alerts-catalog-fix">
+<meta name="app-version" content="2026.05.25.8-approve-role-photo-upload-fix">
 <title>Golden Falcon™ Owner Dashboard</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231E3A2F'/%3E%3Ctext x='50' y='62' font-family='Georgia' font-size='42' font-weight='600' fill='%23B56A3A' text-anchor='middle'%3EGF%3C/text%3E%3C/svg%3E">
@@ -499,6 +499,20 @@ async function apiCall(action, params) {
     });
   }
   const res = await fetch(url);
+  return await res.json();
+}
+
+// POST wala apiCall — large data (photos) ke liye
+async function apiCallPost(action, params) {
+  const body = Object.assign({ action: action }, params);
+  if (STATE.user && STATE.user.sessionId) {
+    body.sessionId = STATE.user.sessionId;
+  }
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
   return await res.json();
 }
 
@@ -1005,7 +1019,7 @@ async function uploadPhoto(base64Data, fileName, mimeType) {
   const progress = document.getElementById('uploadProgress');
   progress.style.display = 'block'; progress.textContent = '⏳ Upload ho raha hai...';
   try {
-    const res = await apiCall('owner_upload_item_photo', { // ✅ string action
+    const res = await apiCallPost('owner_upload_item_photo', {
       item_id:   CURRENT_ITEM.item_id,
       file_data: base64Data,
       file_name: fileName,
